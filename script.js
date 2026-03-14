@@ -420,4 +420,76 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Escape') closeModal();
         });
     }
+
+    // 9. Mobile Navbar Scroll Collapse Logic
+    const mainNav = document.getElementById('main-nav');
+    const navContainer = document.getElementById('nav-container');
+    const floatingNavLinks = document.getElementById('nav-links');
+    const navToggle = document.getElementById('nav-toggle');
+
+    if (mainNav && navContainer && floatingNavLinks && navToggle) {
+        let lastScrollY = window.scrollY;
+        let isCollapsed = false;
+
+        window.addEventListener('scroll', () => {
+            // Only apply on mobile devices (< 768px)
+            if (window.innerWidth < 768) {
+                const currentScrollY = window.scrollY;
+                
+                // If scrolling down and passed 100px, collapse it
+                if (currentScrollY > 100 && currentScrollY > lastScrollY && !isCollapsed) {
+                    floatingNavLinks.classList.add('hidden');
+                    navToggle.classList.remove('hidden');
+                    navToggle.classList.add('block');
+                    
+                    // Move to the right side
+                    mainNav.classList.remove('left-1/2', '-translate-x-1/2');
+                    mainNav.classList.add('right-6', 'translate-x-0');
+                    
+                    isCollapsed = true;
+                } 
+                
+                lastScrollY = currentScrollY;
+            } else {
+                // Reset for desktop if resized
+                if (isCollapsed) {
+                    expandNav();
+                }
+            }
+        });
+
+        // Expand on click
+        navToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            expandNav();
+        });
+
+        function expandNav() {
+            floatingNavLinks.classList.remove('hidden');
+            navToggle.classList.add('hidden');
+            navToggle.classList.remove('block');
+
+            mainNav.classList.add('left-1/2', '-translate-x-1/2');
+            mainNav.classList.remove('right-6', 'translate-x-0');
+            
+            isCollapsed = false;
+        }
+        
+        // Auto-collapse when a link is clicked on mobile
+        const links = floatingNavLinks.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768 && !isCollapsed) {
+                    setTimeout(() => {
+                        floatingNavLinks.classList.add('hidden');
+                        navToggle.classList.remove('hidden');
+                        navToggle.classList.add('block');
+                        mainNav.classList.remove('left-1/2', '-translate-x-1/2');
+                        mainNav.classList.add('right-6', 'translate-x-0');
+                        isCollapsed = true;
+                    }, 400);
+                }
+            });
+        });
+    }
 });
