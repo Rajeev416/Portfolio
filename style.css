@@ -1,13 +1,13 @@
 /* Custom Styles for Rajeev Kumar's Portfolio */
 
 :root {
-    --primary: #8b5cf6;
-    --secondary: #6366f1;
-    --dark: #0a0a0f;
-    --card: rgba(20, 20, 25, 0.6);
-    --accent-glow: rgba(139, 92, 246, 0.15);
+    --primary: #10B981;
+    --secondary: #0EA5E9;
+    --dark: #0b0f14;
+    --card: rgba(12, 18, 24, 0.65);
+    --accent-glow: rgba(16, 185, 129, 0.15);
     --border-color: rgba(255, 255, 255, 0.08);
-    --royal-purple: #7851A9;
+    --royal-purple: #0EA5E9;
     --text-main: #e2e8f0;
     --text-muted: #94a3b8;
 }
@@ -107,7 +107,7 @@ body::before {
 .blob-3 {
     top: 40%;
     left: 30%;
-    background: radial-gradient(circle, #ec4899 0%, transparent 70%);
+    background: radial-gradient(circle, #22D3EE 0%, transparent 70%);
     opacity: 0.05;
     animation-delay: -10s;
 }
@@ -199,11 +199,11 @@ i {
     transition: all 0.3s ease;
 }
 
-/* Active Icon State - Purple Accent */
+/* Active Icon State - Emerald Accent */
 nav a.text-primary i,
 nav a.text-primary [data-lucide] {
     color: var(--primary) !important;
-    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
+    filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.5));
 }
 
 /* Clean Tooltip Design */
@@ -236,7 +236,7 @@ nav a.text-primary [data-lucide] {
 
 /* Glass Enhancement */
 .glass {
-    background: linear-gradient(135deg, rgba(19, 14, 25, 0.7) 0%, rgba(21, 18, 26, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(10, 18, 24, 0.7) 0%, rgba(12, 20, 28, 0.8) 100%);
     backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -250,13 +250,13 @@ nav a.text-primary [data-lucide] {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--text-main);
-    transition: all 0.3s duration;
+    transition: all 0.3s ease;
     cursor: default;
 }
 
 .skill-tag:hover {
     border-color: var(--primary);
-    background: rgba(139, 92, 246, 0.1);
+    background: rgba(16, 185, 129, 0.1);
 }
 
 /* Reference Image Button Style (Rounded Pills) */
@@ -351,12 +351,12 @@ nav a.text-primary [data-lucide] {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #262626;
+    background: #1a2a3a;
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #333;
+    background: #254060;
 }
 
 /* Blur Overlays */
@@ -369,7 +369,7 @@ nav a.text-primary [data-lucide] {
 
 /* Glow Effect */
 .glow-on-hover:hover {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
 }
 
 /* Responsive Font Sizes */
@@ -420,7 +420,7 @@ nav a.text-primary [data-lucide] {
     position: relative;
     border-radius: 0.75rem;
     overflow: hidden;
-    background: #141414;
+    background: #0c1218;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
@@ -441,8 +441,8 @@ nav a.text-primary [data-lucide] {
 .certificate-card-netflix:hover {
     transform: scale(1.03) translateY(-8px);
     z-index: 10;
-    border-color: rgba(var(--bg-accent-rgb, 139, 92, 246), 0.4);
-    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 1), 0 0 30px rgba(var(--bg-accent-rgb, 139, 92, 246), 0.2);
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 1), 0 0 30px rgba(16, 185, 129, 0.2);
 }
 
 .certificate-image-container {
@@ -518,7 +518,6 @@ nav a.text-primary [data-lucide] {
 
 .cert-season {
     color: var(--secondary);
-    /* Neon Green accents for contrast */
 }
 
 /* Experience & Achievement Section Enhancements */
@@ -547,7 +546,7 @@ nav a.text-primary [data-lucide] {
 }
 
 .journey-card:hover {
-    border-color: rgba(139, 92, 246, 0.2);
+    border-color: rgba(16, 185, 129, 0.2);
     transform: translateX(8px);
     background: rgba(255, 255, 255, 0.04);
     box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.3);
@@ -563,12 +562,12 @@ nav a.text-primary [data-lucide] {
 .achievement-card:hover {
     border-color: var(--primary);
     transform: translateY(-8px);
-    background: rgba(139, 92, 246, 0.03);
+    background: rgba(16, 185, 129, 0.03);
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
 }
 
 .timeline-line {
-    background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.2) 20%, rgba(139, 92, 246, 0.2) 80%, transparent);
+    background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.2) 20%, rgba(16, 185, 129, 0.2) 80%, transparent);
 }
 
 .text-muted-refined {
@@ -583,3 +582,30 @@ nav a.text-primary [data-lucide] {
     letter-spacing: -0.01em;
 }
 
+/* Inline Success Toast */
+.form-success-toast {
+    position: fixed;
+    bottom: 5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 1rem 2rem;
+    background: rgba(16, 185, 129, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 1rem;
+    color: #34D399;
+    font-weight: 600;
+    font-size: 0.875rem;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-success-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
