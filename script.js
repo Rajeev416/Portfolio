@@ -1,103 +1,142 @@
 /**
- * Rajeev Kumar Portfolio - Interactive Scripts
+ * Rajeev Kumar Portfolio — Liquid Glass Edition
+ * Section Loader + Interactive Scripts
  * 2026 Recruitment Edition
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Lucide Icons
+    // Initialize Lucide Icons for the navbar and modal
     lucide.createIcons();
 
-    // Success Toast Helper
-    function showSuccessToast() {
-        let toast = document.querySelector('.form-success-toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.className = 'form-success-toast';
-            toast.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Message sent successfully!';
-            document.body.appendChild(toast);
-        }
-        requestAnimationFrame(() => {
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3500);
-        });
+    // ════════════════════════════════════════════════════════════════
+    // 1. SECTION LOADER — Fetch each section HTML and inject
+    // ════════════════════════════════════════════════════════════════
+    const sections = [
+        { id: 'section-hero', file: 'sections/hero.html' },
+        { id: 'section-about', file: 'sections/about.html' },
+        { id: 'section-skills', file: 'sections/skills.html' },
+        { id: 'section-projects', file: 'sections/projects.html' },
+        { id: 'section-experience', file: 'sections/experience.html' },
+        { id: 'section-contact', file: 'sections/contact.html' },
+    ];
+
+    async function loadAllSections() {
+        const results = await Promise.allSettled(
+            sections.map(async ({ id, file }) => {
+                const container = document.getElementById(id);
+                if (!container) return;
+                try {
+                    const response = await fetch(file);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    container.innerHTML = await response.text();
+                    container.classList.remove('section-loading');
+                } catch (err) {
+                    console.error(`Failed to load ${file}:`, err);
+                    container.innerHTML = `<div class="text-center py-16 text-gray-500 text-sm">Section failed to load. Please use a local server.</div>`;
+                    container.classList.remove('section-loading');
+                }
+            })
+        );
+        // After all sections are loaded, initialize everything
+        initializeAll();
     }
 
-    // 2. Typing Animation
-    const typingText = document.getElementById('typing-text');
-    const roles = ['Problem Solver', 'MERN Stack Developer', 'DSA Enthusiast', 'Full-Stack Developer'];
-    let roleIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    let typeSpeed = 100;
+    loadAllSections();
 
-    function type() {
-        const currentRole = roles[roleIndex];
+    // ════════════════════════════════════════════════════════════════
+    // 2. INITIALIZE ALL — Called after sections are injected
+    // ════════════════════════════════════════════════════════════════
+    function initializeAll() {
+        // Re-create icons for all newly loaded sections
+        lucide.createIcons();
 
-        if (isDeleting) {
-            typingText.textContent = currentRole.substring(0, charIndex - 1);
-            charIndex--;
-            typeSpeed = 50;
-        } else {
-            typingText.textContent = currentRole.substring(0, charIndex + 1);
-            charIndex++;
-            typeSpeed = 100;
-        }
-
-        if (!isDeleting && charIndex === currentRole.length) {
-            isDeleting = true;
-            typeSpeed = 2000; // Pause at the end
-        } else if (isDeleting && charIndex === 0) {
-            isDeleting = false;
-            roleIndex = (roleIndex + 1) % roles.length;
-            typeSpeed = 500;
-        }
-
-        setTimeout(type, typeSpeed);
+        initTypingAnimation();
+        initScrollReveal();
+        initActiveNavLink();
+        initCertificationsScroll();
+        initCertMarquee();
+        initContactForm();
+        initProjectModal();
+        initMobileNavbar();
     }
 
-    type();
+    // ════════════════════════════════════════════════════════════════
+    // 3. TYPING ANIMATION
+    // ════════════════════════════════════════════════════════════════
+    function initTypingAnimation() {
+        const typingText = document.getElementById('typing-text');
+        if (!typingText) return;
 
-    // 3. Scroll & Reveal Animations
-    const revealElements = document.querySelectorAll('.reveal, .stagger-children');
-    let scrollInterval;
+        const roles = ['Problem Solver', 'MERN Stack Developer', 'DSA Enthusiast', 'Full-Stack Developer'];
+        let roleIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typeSpeed = 100;
 
+        function type() {
+            const currentRole = roles[roleIndex];
 
+            if (isDeleting) {
+                typingText.textContent = currentRole.substring(0, charIndex - 1);
+                charIndex--;
+                typeSpeed = 50;
+            } else {
+                typingText.textContent = currentRole.substring(0, charIndex + 1);
+                charIndex++;
+                typeSpeed = 100;
+            }
 
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
+            if (!isDeleting && charIndex === currentRole.length) {
+                isDeleting = true;
+                typeSpeed = 2000;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                typeSpeed = 500;
+            }
 
-                // Handle staggered children delay
-                if (entry.target.classList.contains('stagger-children')) {
-                    const children = entry.target.children;
-                    Array.from(children).forEach((child, index) => {
-                        child.style.transitionDelay = `${index * 100}ms`;
+            setTimeout(type, typeSpeed);
+        }
+
+        type();
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // 4. SCROLL & REVEAL ANIMATIONS
+    // ════════════════════════════════════════════════════════════════
+    function initScrollReveal() {
+        const revealElements = document.querySelectorAll('.reveal, .stagger-children');
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+
+                    if (entry.target.classList.contains('stagger-children')) {
+                        const children = entry.target.children;
+                        Array.from(children).forEach((child, index) => {
+                            child.style.transitionDelay = `${index * 100}ms`;
+                        });
+                    }
+
+                    // If the entry has counters, start them
+                    const counters = entry.target.querySelectorAll('.counter');
+                    counters.forEach(counter => {
+                        startCounter(counter);
                     });
                 }
-
-                // If the entry has a counter, start it
-                const counter = entry.target.querySelector('.counter');
-                if (counter) {
-                    startCounter(counter);
-                }
-
-                // If certificates section is revealed, start the autoloop
-                if (entry.target.id === 'certificates-section' || entry.target.querySelector('#cert-carousel')) {
-                    if (typeof startAutoScroll === 'function') {
-                        startAutoScroll();
-                    }
-                }
-            }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
         });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
 
-    revealElements.forEach(el => revealObserver.observe(el));
+        revealElements.forEach(el => revealObserver.observe(el));
+    }
 
-    // 4. Animated Counters
+    // ════════════════════════════════════════════════════════════════
+    // 5. ANIMATED COUNTERS
+    // ════════════════════════════════════════════════════════════════
     function startCounter(el) {
         if (el.dataset.timerId) {
             clearInterval(parseInt(el.dataset.timerId));
@@ -125,84 +164,85 @@ document.addEventListener('DOMContentLoaded', () => {
         el.dataset.timerId = timer;
     }
 
-    // 5. Active Nav Link & Dynamic BG
-    const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('nav a');
+    // ════════════════════════════════════════════════════════════════
+    // 6. ACTIVE NAV LINK (with new pill-style active state)
+    // ════════════════════════════════════════════════════════════════
+    function initActiveNavLink() {
+        const pageSections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
 
-    const updateActiveSection = () => {
-        const winScroll = window.scrollY;
+        const updateActiveSection = () => {
+            const winScroll = window.scrollY;
+            let current = '';
 
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            if (winScroll >= sectionTop - 350) {
-                current = section.getAttribute('id');
-            }
-        });
+            pageSections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (winScroll >= sectionTop - 350) {
+                    current = section.getAttribute('id');
+                }
+            });
 
-        // Update Nav Links
-        navLinks.forEach(link => {
-            link.classList.remove('text-primary');
-            if (link.getAttribute('href') === `#${current}`) {
-                link.classList.add('text-primary');
-            }
-        });
-    };
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        };
 
-    window.addEventListener('scroll', updateActiveSection);
-    updateActiveSection(); // Initial call
-
-
-
-    // 6. Certifications Trigger — scroll into view on click
-    const certTrigger = document.getElementById('certifications-trigger');
-    const certSection = document.getElementById('certificates-section');
-
-    if (certTrigger && certSection) {
-        certTrigger.addEventListener('click', () => {
-            certSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        });
+        window.addEventListener('scroll', updateActiveSection);
+        updateActiveSection();
     }
 
-    // 6b. Certificate Marquee — JS-driven auto-scroll + drag (mouse & touch)
-    (function initCertMarquee() {
+    // ════════════════════════════════════════════════════════════════
+    // 7. CERTIFICATIONS SCROLL TRIGGER
+    // ════════════════════════════════════════════════════════════════
+    function initCertificationsScroll() {
+        const certTrigger = document.getElementById('certifications-trigger');
+        const certSection = document.getElementById('certificates-section');
+
+        if (certTrigger && certSection) {
+            certTrigger.addEventListener('click', () => {
+                certSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // 8. CERTIFICATE MARQUEE — JS-driven auto-scroll + drag
+    // ════════════════════════════════════════════════════════════════
+    function initCertMarquee() {
         const track = document.getElementById('cert-marquee-track');
         if (!track) return;
 
-        // Kill CSS animation — JS will own the position entirely
-        track.style.animation  = 'none';
-        track.style.transform  = 'translateX(0px)';
+        track.style.animation = 'none';
+        track.style.transform = 'translateX(0px)';
 
-        const SPEED = 0.5;          // auto-scroll px per frame at 60 fps
-        let offset       = 0;       // current translateX (px)
-        let halfWidth    = 0;       // = track.scrollWidth / 2 (set on load)
-        let autoScroll   = true;    // paused while hovering or dragging
-        let isDragging   = false;
-        let dragLastX    = 0;
-        let dragDistance = 0;       // total px moved — suppresses accidental clicks
+        const SPEED = 0.5;
+        let offset = 0;
+        let halfWidth = 0;
+        let autoScroll = true;
+        let isDragging = false;
+        let dragLastX = 0;
+        let dragDistance = 0;
 
-        /* ── helper: apply offset to DOM ── */
         function apply() {
             track.style.transform = `translateX(${offset}px)`;
         }
 
-        /* ── helper: keep offset in the seamless loop range ── */
         function wrap() {
             if (halfWidth <= 0) return;
             if (offset <= -halfWidth) offset += halfWidth;
-            if (offset > 0)          offset -= halfWidth;
+            if (offset > 0) offset -= halfWidth;
         }
 
-        /* ── measure after ALL content (images) has loaded ── */
         function measure() {
             halfWidth = track.scrollWidth / 2;
         }
 
-        // First measure immediately, then again on window load (images may change width)
         measure();
         window.addEventListener('load', measure);
 
-        /* ── RAF loop ── */
         (function tick() {
             if (autoScroll && !isDragging) {
                 offset -= SPEED;
@@ -212,56 +252,48 @@ document.addEventListener('DOMContentLoaded', () => {
             requestAnimationFrame(tick);
         })();
 
-        /* ── Hover → pause auto-scroll ── */
         const wrapper = track.closest('.cert-marquee-wrapper');
         if (wrapper) {
             wrapper.addEventListener('mouseenter', () => { if (!isDragging) autoScroll = false; });
-            wrapper.addEventListener('mouseleave', () => { if (!isDragging) autoScroll = true;  });
+            wrapper.addEventListener('mouseleave', () => { if (!isDragging) autoScroll = true; });
         }
 
-        /* ── Drag start ── */
         function startDrag(x) {
-            isDragging   = true;
-            autoScroll   = false;
-            dragLastX    = x;
+            isDragging = true;
+            autoScroll = false;
+            dragLastX = x;
             dragDistance = 0;
             track.style.cursor = 'grabbing';
         }
 
-        /* ── Drag move ── */
         function moveDrag(x) {
             if (!isDragging) return;
-            const delta  = x - dragLastX;
-            dragLastX    = x;
+            const delta = x - dragLastX;
+            dragLastX = x;
             dragDistance += Math.abs(delta);
             offset += delta;
             wrap();
             apply();
         }
 
-        /* ── Drag end ── */
         function endDrag() {
             if (!isDragging) return;
-            isDragging         = false;
-            autoScroll         = true;
+            isDragging = false;
+            autoScroll = true;
             track.style.cursor = '';
         }
 
-        /* ── Suppress link clicks that were really drags (> 5 px) ── */
         track.addEventListener('click', (e) => {
             if (dragDistance > 5) { e.preventDefault(); e.stopPropagation(); }
         }, true);
 
-        /* ── Mouse ── */
         track.addEventListener('mousedown', (e) => { e.preventDefault(); startDrag(e.clientX); });
         document.addEventListener('mousemove', (e) => moveDrag(e.clientX));
-        document.addEventListener('mouseup',   ()  => endDrag());
+        document.addEventListener('mouseup', () => endDrag());
 
-        /* ── Mouse wheel (horizontal scroll over the strip) ── */
         if (wrapper) {
             wrapper.addEventListener('wheel', (e) => {
                 e.preventDefault();
-                // Support both vertical and horizontal wheel gestures
                 const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
                 offset -= delta * 0.8;
                 wrap();
@@ -269,16 +301,32 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { passive: false });
         }
 
-        /* ── Touch ── */
-        track.addEventListener('touchstart', (e) => startDrag(e.touches[0].clientX),     { passive: true });
-        track.addEventListener('touchmove',  (e) => moveDrag(e.touches[0].clientX),      { passive: true });
-        track.addEventListener('touchend',   ()  => endDrag());
-    })();
+        track.addEventListener('touchstart', (e) => startDrag(e.touches[0].clientX), { passive: true });
+        track.addEventListener('touchmove', (e) => moveDrag(e.touches[0].clientX), { passive: true });
+        track.addEventListener('touchend', () => endDrag());
+    }
 
+    // ════════════════════════════════════════════════════════════════
+    // 9. CONTACT FORM (Netlify Forms)
+    // ════════════════════════════════════════════════════════════════
+    function showSuccessToast() {
+        let toast = document.querySelector('.form-success-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'form-success-toast';
+            toast.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Message sent successfully!';
+            document.body.appendChild(toast);
+        }
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        });
+    }
 
-    // 7. Contact Form Handling (Netlify Forms Integration)
-    const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
+    function initContactForm() {
+        const contactForm = document.getElementById('contact-form');
+        if (!contactForm) return;
+
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -291,7 +339,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(contactForm);
             
             try {
-                // Broaden local detection: localhost, 127.x.x.x, 192.168.x.x, 10.x.x.x, or file://
                 const hostname = window.location.hostname;
                 const isLocal = hostname === "localhost" || 
                                 hostname.startsWith("127.") || 
@@ -301,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (isLocal) {
                     console.info("Netlify Form: Local environment detected. Simulating success...");
-                    await new Promise(resolve => setTimeout(resolve, 800)); // Short delay
+                    await new Promise(resolve => setTimeout(resolve, 800));
                 } else {
                     const response = await fetch("/", {
                         method: "POST",
@@ -314,7 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Success Message Animation
                 submitBtn.classList.add('bg-green-500');
                 submitBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-white"></i><span>Message Sent!</span>';
                 lucide.createIcons();
@@ -330,7 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error("Form Submission Error:", error);
                 
-                // FINAL FAILSAFE: If we are not on a netlify domain, assume this error is just local testing
                 if (!window.location.hostname.includes("netlify.app")) {
                     console.warn("Netlify Form: Error ignored because this is likely a local development environment.");
                     
@@ -362,12 +407,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 8. Project & Certificate Modal Logic
-    const projectCards = document.querySelectorAll('.project-card');
-    const projectModal = document.getElementById('project-modal');
-    const modalClose = document.getElementById('modal-close');
+    // ════════════════════════════════════════════════════════════════
+    // 10. PROJECT MODAL
+    // ════════════════════════════════════════════════════════════════
+    function initProjectModal() {
+        const projectCards = document.querySelectorAll('.project-card');
+        const projectModal = document.getElementById('project-modal');
+        const modalClose = document.getElementById('modal-close');
 
-    if (projectModal && modalClose) {
+        if (!projectModal || !modalClose) return;
+
         const attachCardListeners = (cards) => {
             cards.forEach(card => {
                 card.addEventListener('click', (e) => {
@@ -392,7 +441,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     githubBtn.href = github;
                     liveBtn.href = live;
 
-                    // Specific handling for certificates (hide GitHub button often)
                     if (card.classList.contains('certificate-card-netflix')) {
                         githubBtn.classList.add('hidden');
                         liveBtn.innerHTML = '<i data-lucide="maximize" class="w-5 h-5"></i> View Full Certificate';
@@ -428,28 +476,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 9. Mobile Navbar Scroll Collapse Logic
-    const mainNav = document.getElementById('main-nav');
-    const navContainer = document.getElementById('nav-container');
-    const floatingNavLinks = document.getElementById('nav-links');
-    const navToggle = document.getElementById('nav-toggle');
+    // ════════════════════════════════════════════════════════════════
+    // 11. MOBILE NAVBAR COLLAPSE
+    // ════════════════════════════════════════════════════════════════
+    function initMobileNavbar() {
+        const mainNav = document.getElementById('main-nav');
+        const navContainer = document.getElementById('nav-container');
+        const floatingNavLinks = document.getElementById('nav-links');
+        const navToggle = document.getElementById('nav-toggle');
 
-    if (mainNav && navContainer && floatingNavLinks && navToggle) {
+        if (!mainNav || !navContainer || !floatingNavLinks || !navToggle) return;
+
         let lastScrollY = window.scrollY;
         let isCollapsed = false;
 
         window.addEventListener('scroll', () => {
-            // Only apply on mobile devices (< 768px)
             if (window.innerWidth < 768) {
                 const currentScrollY = window.scrollY;
                 
-                // If scrolling down and passed 100px, collapse it
                 if (currentScrollY > 100 && currentScrollY > lastScrollY && !isCollapsed) {
                     floatingNavLinks.classList.add('hidden');
                     navToggle.classList.remove('hidden');
                     navToggle.classList.add('block');
                     
-                    // Move to the right side
                     mainNav.classList.remove('left-1/2', '-translate-x-1/2');
                     mainNav.classList.add('right-6', 'translate-x-0');
                     
@@ -458,14 +507,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 lastScrollY = currentScrollY;
             } else {
-                // Reset for desktop if resized
                 if (isCollapsed) {
                     expandNav();
                 }
             }
         });
 
-        // Expand on click
         navToggle.addEventListener('click', (e) => {
             e.preventDefault();
             expandNav();
@@ -482,7 +529,6 @@ document.addEventListener('DOMContentLoaded', () => {
             isCollapsed = false;
         }
         
-        // Auto-collapse when a link is clicked on mobile
         const links = floatingNavLinks.querySelectorAll('a');
         links.forEach(link => {
             link.addEventListener('click', () => {
